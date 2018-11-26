@@ -37,6 +37,10 @@ func (opts *FIFOCompactionOptions) SetMaxTableFilesSize(value uint64) {
 	C.rocksdb_fifo_compaction_options_set_max_table_files_size(opts.c, C.uint64_t(value))
 }
 
+func (opts *FIFOCompactionOptions) SetAllowCompaction(value bool) {
+	C.rocksdb_fifo_compaction_options_set_allow_compaction(opts.c, C.bool(value))
+}
+
 // Destroy deallocates the FIFOCompactionOptions object.
 func (opts *FIFOCompactionOptions) Destroy() {
 	C.rocksdb_fifo_compaction_options_destroy(opts.c)
