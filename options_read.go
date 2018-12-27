@@ -118,6 +118,24 @@ func (opts *ReadOptions) SetReadaheadSize(value uint64) {
 	C.rocksdb_readoptions_set_readahead_size(opts.c, C.size_t(value))
 }
 
+// SetPrefixSameAsStart enforce that the iterator only iterates over the
+// same prefix as the seek. This option is effective only for prefix seeks,
+// i.e. prefix_extractor is non-null for the column family and
+// total_order_seek is false. Unlike iterate_upper_bound, prefix_same_as_start
+// only works within a prefix but in both directions.
+// Default: false
+func (opts *ReadOptions) SetPrefixSameAsStart(value bool) {
+	C.rocksdb_readoptions_set_prefix_same_as_start(opts.c, boolToChar(value))
+}
+
+// SetIgnoreRangeDeletions if true, keys deleted using the DeleteRange() API
+// will be visible to readers until they are naturally deleted during compaction.
+// This improves read performance in DBs with many range deletions.
+// Default: false
+func (opts *ReadOptions) SetIgnoreRangeDeletions(value bool) {
+	C.rocksdb_readoptions_set_ignore_range_deletions(opts.c, boolToChar(value))
+}
+
 // Destroy deallocates the ReadOptions object.
 func (opts *ReadOptions) Destroy() {
 	C.rocksdb_readoptions_destroy(opts.c)
