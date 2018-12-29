@@ -98,6 +98,22 @@ func (opts *ReadOptions) SetIterateUpperBound(key []byte) {
 	C.rocksdb_readoptions_set_iterate_upper_bound(opts.c, cKey, cKeyLen)
 }
 
+// SetIterateLowerBound specifies `iterate_lower_bound` defines the
+// smallest key at which the backward iterator can return an entry.
+// Once the bound is passed, Valid() will be false.
+// `iterate_lower_bound` is inclusive ie the bound value is a valid entry.
+//
+// If prefix_extractor is not null, the Seek target and `iterate_lower_bound`
+// need to have the same prefix. This is because ordering is not guaranteed
+// outside of prefix domain.
+//
+// Default: nullptr
+func (opts *ReadOptions) SetIterateLowerBound(key []byte) {
+	cKey := byteToChar(key)
+	cKeyLen := C.size_t(len(key))
+	C.rocksdb_readoptions_set_iterate_lower_bound(opts.c, cKey, cKeyLen)
+}
+
 // SetPinData specifies the value of "pin_data". If true, it keeps the blocks
 // loaded by the iterator pinned in memory as long as the iterator is not deleted,
 // If used when reading from tables created with
@@ -117,6 +133,24 @@ func (opts *ReadOptions) SetPinData(value bool) {
 func (opts *ReadOptions) SetReadaheadSize(value uint64) {
 	C.rocksdb_readoptions_set_readahead_size(opts.c, C.size_t(value))
 }
+
+ // SetPrefixSameAsStart enforce that the iterator only iterates over the
+ // same prefix as the seek. This option is effective only for prefix seeks,
+ // i.e. prefix_extractor is non-null for the column family and
+ // total_order_seek is false. Unlike iterate_upper_bound, prefix_same_as_start
+ // only works within a prefix but in both directions.
+ // Default: false
+ func (opts *ReadOptions) SetPrefixSameAsStart(value bool) {
+ 	C.rocksdb_readoptions_set_prefix_same_as_start(opts.c, boolToChar(value))
+ }
+
+  // SetIgnoreRangeDeletions if true, keys deleted using the DeleteRange() API
+ // will be visible to readers until they are naturally deleted during compaction.
+ // This improves read performance in DBs with many range deletions.
+ // Default: false
+ func (opts *ReadOptions) SetIgnoreRangeDeletions(value bool) {
+ 	C.rocksdb_readoptions_set_ignore_range_deletions(opts.c, boolToChar(value))
+ }
 
 // Destroy deallocates the ReadOptions object.
 func (opts *ReadOptions) Destroy() {
