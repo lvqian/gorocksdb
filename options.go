@@ -1021,6 +1021,13 @@ func (opts *Options) EnableStatistics() {
 	C.rocksdb_options_enable_statistics(opts.c)
 }
 
+// GetStatisticsString get the dump log of rocksdb.
+func (opts *Options) GetStatisticsString() string {
+	cValue := C.rocksdb_options_statistics_get_string(opts.c)
+	defer C.free(unsafe.Pointer(cValue))
+	return C.GoString(cValue)
+}
+
 // PrepareForBulkLoad prepare the DB for bulk loading.
 //
 // All data will be in level 0 without any automatic compaction.
